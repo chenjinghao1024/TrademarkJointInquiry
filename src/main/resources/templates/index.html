@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <meta content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title></title>
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7-dist/css/bootstrap-theme.css}">
+    <style>
+        .panel-body {
+            height: 260px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="row">
+    <div class="col-md-8 col-md-push-2 col-xs-12">
+        <div class="page-header">
+            <h2>商标联合查询系统</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-push-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="请输入商标名称" id="search_text">
+                    <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" id="search_btn">查询</button>
+                  </span>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px">
+            <div class="col-md-4 " >
+                <div class="panel panel-info">
+                    <div class="panel-heading">USPTO : <label id="USPTO_count"></label></div>
+                    <div class="panel-body">
+                        <img th:src="@{/img/uspto.jpg}" height="230px" alt="USPTO"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" hidden>
+                <div class="panel panel-default">
+                    <div class="panel-heading">EUIPO</div>
+                    <div class="panel-footer">
+                        <label class="trademark"></label>
+                        <label id="EUIPO_count"></label>
+                    </div>
+                    <div class="panel-body">
+                        <img th:src="@{/img/EUIPO.png}" width="230px"/>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" hidden>
+                <div class="panel panel-default">
+                    <div class="panel-heading">UK IPO</div>
+                    <div class="panel-body">
+                        <img th:src="@{/img/UK.png}" height="230px" alt="UK IPO"/>
+                        <label class="trademark"></label>
+                        <label id="UK_count"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!--JQuery-->
+<script th:src="@{/jquery-3.4.0.min.js}"></script>
+<!--bootstrap-->
+<script  th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.js}"></script>
+<script>
+    $("#search_btn").click(function () {
+        var searchText = $("#search_text").val();
+        console.log(searchText);
+        $(".trademark").text(searchText);
+
+        $.post("/trademark/searchFromUSPTO",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+        });
+
+        // $.post("/trademark/searchTrademarkFromEUIPO",{trademarkName:searchText},function(result){
+        //     var trademarkInfo = result.trademarkInfo;
+        //     $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+        // });
+        //
+        // $.post("/trademark/searchTrademarkFromUK",{trademarkName:searchText},function(result){
+        //     var trademarkInfo = result.trademarkInfo;
+        //     $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+        // });
+    });
+
+</script>
+
+</html>
