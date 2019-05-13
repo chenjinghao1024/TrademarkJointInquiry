@@ -12,7 +12,7 @@ public class TrademarkInfo {
 
     private List<Map<String, String>> trademarks;
 
-    private Long count;
+    private Long count = 0l;
 
     public List<Map<String, String>> getTrademarks() {
         return trademarks;

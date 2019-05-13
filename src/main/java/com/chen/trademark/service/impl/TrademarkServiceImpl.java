@@ -10,18 +10,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxBinary;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ResourceUtils;
 import org.w3c.dom.NodeList;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,9 +28,9 @@ public class TrademarkServiceImpl implements ITrademarkService {
     public TrademarkInfo searchTrademarkNameFromUSPTO(String trademarkName) {
         try {
             return searchFromUSPTO(trademarkName);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new TrademarkInfo();
         }
     }
 
@@ -48,7 +40,7 @@ public class TrademarkServiceImpl implements ITrademarkService {
             return searchFromEUIPO(trademarkName);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new TrademarkInfo();
         }
     }
 
@@ -58,10 +50,10 @@ public class TrademarkServiceImpl implements ITrademarkService {
             return searchFromUK(trademarkName);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new TrademarkInfo();
         }
     }
-    TrademarkInfo searchFromEUIPO(String trademarkName) throws InterruptedException {
+    TrademarkInfo searchFromEUIPO(String trademarkName) throws Exception {
 
         WebDriver driver = new ChromeDriver() ;
 
@@ -91,14 +83,13 @@ public class TrademarkServiceImpl implements ITrademarkService {
         TrademarkInfo trademarkInfo = new TrademarkInfo();
         trademarkInfo.setCount(Long.parseLong(count));
 
-        driver.close();
         driver.quit();
         return trademarkInfo;
     }
 
 
 
-    TrademarkInfo searchFromUK(String trademarkName) throws IOException, InterruptedException {
+    TrademarkInfo searchFromUK(String trademarkName) throws Exception {
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
@@ -121,7 +112,7 @@ public class TrademarkServiceImpl implements ITrademarkService {
     }
 
 
-    TrademarkInfo searchFromUSPTO(String trademarkName) throws IOException {
+    TrademarkInfo searchFromUSPTO(String trademarkName) throws Exception {
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
