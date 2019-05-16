@@ -9,7 +9,7 @@ public class TrademarkApplication {
 
     public static void main(String[] args) {
         String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-        System.setProperty("webdriver.chrome.driver", path+"static/driver/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "E:/chromedriver.exe");
 
         SpringApplication.run(TrademarkApplication.class, args);
     }

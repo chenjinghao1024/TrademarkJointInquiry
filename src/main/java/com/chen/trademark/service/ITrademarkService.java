@@ -13,4 +13,6 @@ public interface ITrademarkService {
     TrademarkInfo searchTrademarkFromEUIPO(String trademarkName);
 
     TrademarkInfo searchTrademarkFromUK(String trademarkName);
+
+    TrademarkInfo searchTrademarkFromDPMA(String trademarkName);
 }

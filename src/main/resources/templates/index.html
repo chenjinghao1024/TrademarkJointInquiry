@@ -48,19 +48,27 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4" hidden>
-                <div class="panel panel-default">
-                    <div class="panel-heading">EUIPO</div>
-                    <div class="panel-body loading-EUIPO">
-                        <img th:src="@{/img/EUIPO.png}" width="230px"/>
-                    </div>
-                </div>
-            </div>
             <div class="col-md-4">
                 <div class="panel panel-default trademark">
                     <div class="panel-heading">UK IPO :<label id="UK_count"></label></div>
                     <div class="panel-body loading-UK">
                         <img th:src="@{/img/UK.png}" height="230px" alt="UK IPO"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default panel-info trademark">
+                    <div class="panel-heading">DPMA :<label id="DPMA_count"></label></div>
+                    <div class="panel-body loading-DPMA">
+                        <img th:src="@{/img/DPMA.jpg}" width="230px" alt="DPMA"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" hidden>
+                <div class="panel panel-default">
+                    <div class="panel-heading">EUIPO</div>
+                    <div class="panel-body loading-EUIPO">
+                        <img th:src="@{/img/EUIPO.png}" width="230px"/>
                     </div>
                 </div>
             </div>
@@ -81,6 +89,7 @@
 
         $('.loading-USPTO').loading('show');
         $('.loading-UK').loading('show');
+        $('.loading-DPMA').loading('show');
 
         $.post("/trademark/searchFromUSPTO",{trademarkName:searchText},function(result){
             var trademarkInfo = result.trademarkInfo;
@@ -97,13 +106,19 @@
             $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
             deal(result.trademarkOffice)
         });
+
+        $.post("/trademark/searchTrademarkFromDPMA",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
     });
 
     var dealCount = 0;
     function deal(tag) {
         $('.loading-'+tag).loading('hide');
         dealCount++;
-        if (dealCount === 2) {
+        if (dealCount === 3) {
             $("#search_btn").button('reset');
         }
     }

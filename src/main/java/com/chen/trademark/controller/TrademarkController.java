@@ -53,4 +53,14 @@ public class TrademarkController {
         response.setTrademarkInfo(trademarkInfo);
         return response;
     }
+
+    @PostMapping
+    @RequestMapping("/searchTrademarkFromDPMA")
+    public SearchTrademarkResponse searchTrademarkFromDPMA(String trademarkName) {
+        SearchTrademarkResponse response = new SearchTrademarkResponse(trademarkName, "DPMA");
+        response.setTrademarkName(trademarkName);
+        TrademarkInfo trademarkInfo = trademarkService.searchTrademarkFromDPMA(trademarkName);
+        response.setTrademarkInfo(trademarkInfo);
+        return response;
+    }
 }
