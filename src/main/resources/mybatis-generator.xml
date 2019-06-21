@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="MySql" defaultModelType="flat">
+
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+        <!-- 使用自定义的插件 -->
+        <plugin type="com.chen.generator.LombokPlugin"/>
+
+        <!-- 自定义注释生成器 -->
+        <commentGenerator type="com.chen.generator.MySqlCommentGenerator">
+            <property name="author" value="Mr.D"/>
+            <property name="dateFormat" value="yyyy/MM/dd"/>
+        </commentGenerator>
+
+        <jdbcConnection
+                driverClass="com.mysql.jdbc.Driver"
+                connectionURL="jdbc:mysql://192.168.251.251:3306/trademark?serverTimezone=UTC"
+                userId="trademark"
+                password="123457">
+            <property name="useInformationSchema" value="true" />
+        </jdbcConnection>
+
+        <!-- 指定自动生成的 POJO置于哪个包下 -->
+        <javaModelGenerator targetPackage="com.chen.trademark.entity"
+                            targetProject="src/main/java"/>
+
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
+
+        <javaClientGenerator targetPackage="com.chen.trademark.mapper"
+                             targetProject="src/main/java" type="XMLMAPPER"/>
+
+        <!--tableName -> 表名  domainObjectName -> 实体类名 -->
+        <table tableName="file_record">
+            <property name="modelOnly" value="false"/>
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="trademark_record">
+            <property name="modelOnly" value="false"/>
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="trademark_result">
+            <property name="modelOnly" value="false"/>
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+    </context>
+
+</generatorConfiguration>

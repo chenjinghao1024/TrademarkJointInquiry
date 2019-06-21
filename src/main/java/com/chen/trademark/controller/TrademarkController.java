@@ -63,4 +63,55 @@ public class TrademarkController {
         response.setTrademarkInfo(trademarkInfo);
         return response;
     }
+
+    @PostMapping
+    @RequestMapping("/searchTrademarkFromINPI")
+    public SearchTrademarkResponse searchTrademarkFromINPI(String trademarkName) {
+        SearchTrademarkResponse response = new SearchTrademarkResponse(trademarkName, "INPI");
+        response.setTrademarkName(trademarkName);
+        TrademarkInfo trademarkInfo = trademarkService.searchTrademarkFromINPI(trademarkName);
+        response.setTrademarkInfo(trademarkInfo);
+        return response;
+    }
+
+    @PostMapping
+    @RequestMapping("/searchTrademarkFromUIBM")
+    public SearchTrademarkResponse searchTrademarkFromUIBM(String trademarkName) {
+        SearchTrademarkResponse response = new SearchTrademarkResponse(trademarkName, "INPI");
+        response.setTrademarkName(trademarkName);
+        TrademarkInfo trademarkInfo = trademarkService.searchTrademarkFromUIBM(trademarkName);
+        response.setTrademarkInfo(new TrademarkInfo());
+        return response;
+    }
+
+    @PostMapping
+    @RequestMapping("/searchTrademarkFromOEPM")
+    public SearchTrademarkResponse searchTrademarkFromOEPM(String trademarkName) {
+        SearchTrademarkResponse response = new SearchTrademarkResponse(trademarkName, "OEPM");
+        response.setTrademarkName(trademarkName);
+        TrademarkInfo trademarkInfo = trademarkService.searchTrademarkFromOEPM(trademarkName);
+        response.setTrademarkInfo(trademarkInfo);
+        return response;
+    }
+
+    @PostMapping
+    @RequestMapping("/searchTrademarkFromJP")
+    public SearchTrademarkResponse searchTrademarkFromJP(String trademarkName) {
+        SearchTrademarkResponse response = new SearchTrademarkResponse(trademarkName, "JP");
+        response.setTrademarkName(trademarkName);
+        TrademarkInfo trademarkInfo = trademarkService.searchTrademarkFromJP(trademarkName);
+        response.setTrademarkInfo(trademarkInfo);
+        return response;
+    }
+
+    @PostMapping
+    @RequestMapping("/searchTrademarkFromWIPO")
+    public SearchTrademarkResponse searchTrademarkFromWIPO(String trademarkName) {
+        SearchTrademarkResponse response = new SearchTrademarkResponse(trademarkName, "WIPO");
+        response.setTrademarkName(trademarkName);
+        TrademarkInfo trademarkInfo = trademarkService.searchTrademarkFromWIPO(trademarkName);
+        response.setTrademarkInfo(trademarkInfo);
+        return response;
+    }
+
 }

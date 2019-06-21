@@ -1,9 +1,12 @@
 package com.chen.trademark.model;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Data
 public class TrademarkInfo {
 
     public TrademarkInfo() {
@@ -13,22 +16,6 @@ public class TrademarkInfo {
     private List<Map<String, String>> trademarks;
 
     private Long count = 0l;
-
-    public List<Map<String, String>> getTrademarks() {
-        return trademarks;
-    }
-
-    public void setTrademarks(List<Map<String, String>> trademarks) {
-        this.trademarks = trademarks;
-    }
-
-    public Long getCount() {
-        return count;
-    }
-
-    public void setCount(Long count) {
-        this.count = count;
-    }
 
     public void size() {
         trademarks.size();

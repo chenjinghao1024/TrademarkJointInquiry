@@ -64,14 +64,51 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4" hidden>
+        </div>
+        <div class="row">
+            <div class="col-md-4" >
                 <div class="panel panel-default">
-                    <div class="panel-heading">EUIPO</div>
+                    <div class="panel-heading">EUIPO :<label id="EUIPO_count"></label></div>
                     <div class="panel-body loading-EUIPO">
                         <img th:src="@{/img/EUIPO.png}" width="230px"/>
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">INPI :<label id="INPI_count"></label></div>
+                    <div class="panel-body loading-INPI">
+                        <img th:src="@{/img/inpi.jpg}" width="230px"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">OEPM :<label id="OEPM_count"></label></div>
+                    <div class="panel-body loading-OEPM">
+                        <img th:src="@{/img/OEPM.jpg}" width="230px"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">J_PLATPAT :<label id="JP_count"></label></div>
+                    <div class="panel-body loading-JP">
+                        <img th:src="@{/img/JPlatpat.png}" width="230px"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">WIPO :<label id="WIPO_count"></label></div>
+                    <div class="panel-body loading-WIPO">
+                        <img th:src="@{/img/wipo.jpg}" width="230px"/>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </body>
@@ -82,6 +119,27 @@
 <script  th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.js}"></script>
 <script  th:src="@{/loading/loading.js}"></script>
 <script>
+    $(function () {
+        $('.loading-USPTO').loading('show');
+        $('.loading-UK').loading('show');
+        $('.loading-DPMA').loading('show');
+        $('.loading-EUIPO').loading('show');
+        $('.loading-INPI').loading('show');
+        $('.loading-OEPM').loading('show');
+        $('.loading-JP').loading('show');
+        $('.loading-WIPO').loading('show');
+
+        $('.loading-USPTO').loading('hide');
+        $('.loading-UK').loading('hide');
+        $('.loading-DPMA').loading('hide');
+        $('.loading-EUIPO').loading('hide');
+        $('.loading-INPI').loading('hide');
+        $('.loading-OEPM').loading('hide');
+        $('.loading-JP').loading('hide');
+        $('.loading-WIPO').loading('hide');
+    });
+
+
     $("#search_btn").click(function () {
 
         var searchText = $("#search_text").val();
@@ -90,18 +148,25 @@
         $('.loading-USPTO').loading('show');
         $('.loading-UK').loading('show');
         $('.loading-DPMA').loading('show');
+        $('.loading-EUIPO').loading('show');
+        $('.loading-INPI').loading('show');
+        $('.loading-OEPM').loading('show');
+        $('.loading-JP').loading('show');
+        $('.loading-WIPO').loading('show');
 
         $.post("/trademark/searchFromUSPTO",{trademarkName:searchText},function(result){
             var trademarkInfo = result.trademarkInfo;
             $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
             deal(result.trademarkOffice)
         });
-        // $.post("/trademark/searchTrademarkFromEUIPO",{trademarkName:searchText},function(result){
-        //     var trademarkInfo = result.trademarkInfo;
-        //     $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
-        // });
-        //
+
         $.post("/trademark/searchTrademarkFromUK",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+
+        $.post("/trademark/searchTrademarkFromEUIPO",{trademarkName:searchText},function(result){
             var trademarkInfo = result.trademarkInfo;
             $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
             deal(result.trademarkOffice)
@@ -112,13 +177,35 @@
             $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
             deal(result.trademarkOffice)
         });
+        $.post("/trademark/searchTrademarkFromINPI",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+        $.post("/trademark/searchTrademarkFromOEPM",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+        $.post("/trademark/searchTrademarkFromJP",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+        $.post("/trademark/searchTrademarkFromWIPO",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
     });
 
     var dealCount = 0;
     function deal(tag) {
         $('.loading-'+tag).loading('hide');
         dealCount++;
-        if (dealCount === 3) {
+        console.log(dealCount);
+        if (dealCount === 8) {
+            dealCount = 0;
             $("#search_btn").button('reset');
         }
     }

@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class IndexController {
-    @RequestMapping("/")
+    @RequestMapping({"/","/index"})
     public String index(ModelMap map) {
         return "index";
+    }
+
+    @RequestMapping("/batch")
+    public String batch(ModelMap map) {
+        return "batch";
     }
 }
