@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>商标联合查询系统</title>
+    <link th:href="@{/plugins/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/plugins/simple-line-icons/simple-line-icons.min.css}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/bootstrap-3.3.7/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/wait/css/waitMe.css}">
+
+    <!-- BEGIN THEME STYLES -->
+    <!-- DOC: To use 'rounded corners' style just load 'components-rounded.css' stylesheet instead of 'components.css' in the below style tag -->
+    <link th:href="@{/css/components-rounded.css}" id="style_components" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/plugins.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/layout.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/default.css}" rel="stylesheet" type="text/css" id="style_color">
+    <link th:href="@{/css/custom.css}" rel="stylesheet" type="text/css">
+    <!-- END THEME STYLES -->
+    <style type="text/css">
+        .panel-body{
+            min-height: 150px
+        }
+        .portlet-body.text-center{
+            height: 320px;
+            padding: 15px;
+        }
+/*        body,.page-content{
+            background: #fff !important;
+        }
+        .portlet.light{
+            border: 1px solid #eeeeee;
+        }*/
+/*        .jumbotron{
+            margin-left: -1px;
+            background-image: url('../static/img/wave-hero-background.svg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: bottom;
+            height: 200px;
+            background-color: #fff;
+        }*/
+    </style>
+</head>
+<body>
+    <!-- BEGIN HEADER -->
+    <div class="page-header">
+        <!-- BEGIN HEADER MENU -->
+        <div class="page-header-menu">
+            <div class="container">
+                <!-- END HEADER SEARCH BOX -->
+                <!-- BEGIN MEGA MENU -->
+                <!-- DOC: Apply "hor-menu-light" class after the "hor-menu" class below to have a horizontal menu with white background -->
+                <!-- DOC: Remove data-hover="dropdown" and data-close-others="true" attributes below to disable the dropdown opening on mouse hover -->
+                <div class="menu-title">
+                    商标联合查询系统
+                </div>
+                <div class="hor-menu ">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="index"><i class="icon-home"></i> 导入</a>
+                        </li>
+                        <li>
+                            <a href="record"><i class="icon-wallet"></i> 记录</a>
+                        </li>
+                        <li  class="active">
+                            <a href="query"><i class="icon-magnifier"></i> 查询</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- END MEGA MENU -->
+            </div>
+        </div>
+        <!-- END HEADER MENU -->
+    </div>
+    <!-- END HEADER -->
+    <!-- BEGIN PAGE CONTAINER -->
+    <div class="page-container">
+        <!-- BEGIN PAGE CONTENT -->
+        <div class="page-content">
+            <div class="container">
+                <div class="row margin-top-10">
+                    <div class="col-md-12 col-sm-12">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet box blue-hoki">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            </i>商标查询
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <!-- BEGIN FORM-->
+                                        <form action="javascript:;" class="form-horizontal">
+                                            <div class="form-body">
+                                                <div class="form-group" style="margin-top: 15px;">
+                                                    <div class="col-md-6 col-md-push-3">
+                                                       
+                                                        <label class="col-md-3 control-label">商标名称：</label>
+                                                        <div class="col-md-8">
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" placeholder="请输入商标名称" id="search_text">
+                                                                <span class="input-group-btn">
+                                                                <button class="btn btn-success" type="button" id="search_btn" data-loading-text="Loading..."><i class="fa fa-arrow-left fa-fw" ></i> 查询</button>
+                                                                </span>
+                                                            </div>                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <!-- END FORM-->
+                                    </div>
+                                </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-USPTO">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">USPTO :</span>
+                                    <span class="badge badge-default" id="USPTO_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/uspto.jpg}" height="230px" alt="USPTO" class="img-responsive" />
+<!--                                 <img src="http://192.168.251.251:8080/img/uspto.jpg" height="230px" alt="USPTO" class="img-responsive" /> -->
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-UK">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">UK IPO :</span>
+                                    <span class="badge badge-default" id="UK_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/UK.png}" height="230px" alt="UK IPO" class="img-responsive"/>
+<!--                                 <img src="http://192.168.251.251:8080/img/UK.png" height="230px" alt="UK IPO" class="img-responsive"/> -->
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-DPMA">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">DPMA :</span>
+                                    <span class="badge badge-default" id="DPMA_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/DPMA.jpg}" width="230px" alt="DPMA" class="img-responsive"/>
+<!--                                     <img src="http://192.168.251.251:8080/img/DPMA.jpg" width="230px" alt="DPMA" class="img-responsive"/> -->
+                                
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-EUIPO">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">EUIPO :</span>
+                                    <span class="badge badge-default" id="EUIPO_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/EUIPO.png}" width="230px" class="img-responsive"/>
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-INPI">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">INPI :</span>
+                                    <span class="badge badge-default" id="INPI_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/inpi.jpg}" width="230px" class="img-responsive"/>
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-OEPM">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">OEPM :</span>
+                                    <span class="badge badge-default" id="OEPM_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/OEPM.jpg}" width="230px" class="img-responsive"/>
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-JP">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">J_PLATPAT :</span>
+                                    <span class="badge badge-default" id="JP_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/JPlatpat.png}" width="230px" class="img-responsive"/>
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <!-- BEGIN PORTLET-->
+                        <div class="portlet light loading-WIPO">
+                            <div class="portlet-title">
+                                <div class="caption caption-md">
+                                    <i class="icon-bar-chart theme-font hide"></i>
+                                    <span class="caption-subject font-red-sunglo bold uppercase">WIPO :</span>
+                                    <span class="badge badge-default" id="WIPO_count"></span>
+                                </div>
+                            </div>
+                            <div class="portlet-body text-center">
+                                <img th:src="@{/img/wipo.jpg}" width="230px" class="img-responsive"/>
+                            </div>
+                        </div>
+                        <!-- END PORTLET-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!--JQuery-->
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+<script type="text/javascript" th:src="@{/plugins/bootstrap-3.3.7/js/bootstrap.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/wait/js/waitMe.js}"></script>
+<script>
+    var list = [
+        ".loading-USPTO",
+        ".loading-UK",
+        ".loading-DPMA",
+        ".loading-EUIPO",
+        ".loading-INPI",
+        ".loading-OEPM",
+        ".loading-JP",
+        ".loading-WIPO",
+    ]
+
+    // $(function () {
+    //     $('.loading-USPTO').loading('show');
+    //     $('.loading-UK').loading('show');
+    //     $('.loading-DPMA').loading('show');
+    //     $('.loading-EUIPO').loading('show');
+    //     $('.loading-INPI').loading('show');
+    //     $('.loading-OEPM').loading('show');
+    //     $('.loading-JP').loading('show');
+    //     $('.loading-WIPO').loading('show');
+
+    //     $('.loading-USPTO').loading('hide');
+    //     $('.loading-UK').loading('hide');
+    //     $('.loading-DPMA').loading('hide');
+    //     $('.loading-EUIPO').loading('hide');
+    //     $('.loading-INPI').loading('hide');
+    //     $('.loading-OEPM').loading('hide');
+    //     $('.loading-JP').loading('hide');
+    //     $('.loading-WIPO').loading('hide');
+    // });
+    function run_waitMe(dom_class){
+        $(dom_class).waitMe({
+            effect : 'roundBounce',
+            text : '',
+            bg : "rgba(255,255,255,0.7)",
+            color : "#CC99CC",
+            sizeW : '',
+            sizeH : '',
+            source : ''
+        });
+    }
+
+    $("#search_btn").click(function () {
+
+        var searchText = $("#search_text").val();
+        $(this).button('loading')
+
+        // loading
+        for (var i = 0; i < list.length; i++) {
+            run_waitMe(list[i])
+        }
+        // $('.loading-USPTO').loading('show');
+        // $('.loading-UK').loading('show');
+        // $('.loading-DPMA').loading('show');
+        // $('.loading-EUIPO').loading('show');
+        // $('.loading-INPI').loading('show');
+        // $('.loading-OEPM').loading('show');
+        // $('.loading-JP').loading('show');
+        // $('.loading-WIPO').loading('show');
+
+        $.post("/trademark/searchFromUSPTO",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+
+        $.post("/trademark/searchTrademarkFromUK",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+
+        $.post("/trademark/searchTrademarkFromEUIPO",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+
+        $.post("/trademark/searchTrademarkFromDPMA",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+        $.post("/trademark/searchTrademarkFromINPI",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+        $.post("/trademark/searchTrademarkFromOEPM",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+        $.post("/trademark/searchTrademarkFromJP",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+        $.post("/trademark/searchTrademarkFromWIPO",{trademarkName:searchText},function(result){
+            var trademarkInfo = result.trademarkInfo;
+            $('#' + result.trademarkOffice + '_count').text(trademarkInfo.count);
+            deal(result.trademarkOffice)
+        });
+    });
+
+    var dealCount = 0;
+    function deal(tag) {
+        // $('.loading-'+tag).loading('hide');
+        $('.loading-'+tag).waitMe('hide');
+        dealCount++;
+        console.log(dealCount);
+        if (dealCount === 8) {
+            dealCount = 0;
+            $("#search_btn").button('reset');
+        }
+    }
+</script>
+
+</html>

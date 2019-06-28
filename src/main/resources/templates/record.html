@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>商标联合查询系统</title>
+	<link th:href="@{/plugins/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/plugins/simple-line-icons/simple-line-icons.min.css}" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" type="text/css" th:href="@{/plugins/bootstrap-3.3.7/css/bootstrap.css}">
+
+<!-- 	<link media="all" rel="stylesheet" type="text/css"/ th:href="@{/plugins/dataTables/datatables.min.css}" > -->
+	<link media="all" rel="stylesheet" type="text/css" th:href="@{/plugins/bootstrap-table/dist/bootstrap-table.css}" >
+
+	<link rel="stylesheet" type="text/css" th:href="@{/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css}">
+
+	<!-- BEGIN THEME STYLES -->
+	<!-- DOC: To use 'rounded corners' style just load 'components-rounded.css' stylesheet instead of 'components.css' in the below style tag -->
+	<link th:href="@{/css/components-rounded.css}" id="style_components" rel="stylesheet" type="text/css">
+	<link th:href="@{/css/plugins.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/css/layout.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/css/default.css}" rel="stylesheet" type="text/css" id="style_color">
+	<link th:href="@{/css/custom.css}" rel="stylesheet" type="text/css">
+	<!-- END THEME STYLES -->
+
+	<style type="text/css">
+		th,td{
+			vertical-align: middle !important;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<!-- BEGIN HEADER -->
+	<div class="page-header">
+		<!-- BEGIN HEADER MENU -->
+		<div class="page-header-menu">
+			<div class="container">
+				<!-- END HEADER SEARCH BOX -->
+				<!-- BEGIN MEGA MENU -->
+				<!-- DOC: Apply "hor-menu-light" class after the "hor-menu" class below to have a horizontal menu with white background -->
+				<!-- DOC: Remove data-hover="dropdown" and data-close-others="true" attributes below to disable the dropdown opening on mouse hover -->
+				<div class="menu-title">
+					商标联合查询系统
+				</div>
+				<div class="hor-menu ">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="index"><i class="icon-home"></i> 导入</a>
+						</li>
+						<li class="active">
+							<a href="record"><i class="icon-wallet"></i> 记录</a>
+						</li>
+						<li>
+							<a href="query"><i class="icon-magnifier"></i> 查询</a>
+						</li>
+					</ul>
+				</div>
+				<!-- END MEGA MENU -->
+			</div>
+		</div>
+		<!-- END HEADER MENU -->
+	</div>
+	<!-- END HEADER -->
+	<!-- BEGIN PAGE CONTAINER -->
+	<div class="page-container">
+		<!-- BEGIN PAGE CONTENT -->
+		<div class="page-content">
+			<div class="container">
+				<!-- BEGIN PAGE CONTENT INNER -->
+				<div class="row margin-top-10">
+					<div class="col-md-12 col-sm-12">
+						<!-- BEGIN PORTLET-->
+						<div class="portlet light ">
+							<div class="portlet-title tabbable-line">
+								<ul class="nav nav-tabs pull-left">
+									<li class="active">
+										<a href="#tab1" aria-controls="tab1" role="tab" data-toggle="tab">
+											<span class="caption-subject theme-font bold uppercase">历史记录</span>
+										</a>
+									</li>
+									<li>
+										<a href="#tab2" aria-controls="tab2" role="tab" data-toggle="tab">
+											<span class="caption-subject theme-font bold uppercase">文件明细</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+
+							<div class="portlet-body">
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<div class="tab-pane active" id="tab1">
+									    <div class="panel-body">
+											<div class="form-inline">
+												<div class="form-group">
+												    <label >文件名称：</label>
+												    <input type="text" class="form-control" id="file_name" placeholder="请输入关键字">
+											  		<label style="margin-left: 15px;">导入时间：</label>
+											  		<div class="input-group">
+													    <input type="text" class="form-control" placeholder="请选择开始时间" id="start_date">
+													    <span class="input-group-addon">~</span>
+													    <input type="text" class="form-control" placeholder="请选择结束时间" id="end_date">
+													</div>
+											  	</div>
+											  	<button class="btn green-haze pull-right" onclick="FileDateToSearch()">查询</button>
+											</div>
+									    </div>
+									    <div class="panel-body">
+						    				<table class="table table-bordered" id="file_table"></table>
+										</div>
+									</div>	
+									<div class="tab-pane" id="tab2">
+										<div class="wraper">
+										    <div class="panel-body">
+										    	<div class="form-inline">
+													<div class="form-group">
+													    <label >商标名称：</label>
+													    <input type="text" class="form-control" id="search-trademark-name" placeholder="请输入关键字">
+												  	</div>
+												  	<button class="btn green-haze pull-right" onclick="TrademarkNameToSearch()">查询</button>
+												</div>
+										    </div>
+										    <!-- Table -->
+										    <div class="panel-body">
+							    				<table class="table table-bordered" id="trademark_table"></table>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<!-- END PORTLET-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+	<script type="text/javascript" th:src="@{/plugins/bootstrap-3.3.7/js/bootstrap.js}"></script>
+	<script type="text/javascript" th:src="@{/plugins/bootstrap-fileinput/js/fileinput.min.js}"></script>
+	<!-- <script type="text/javascript" src="./bootstrap-fileinput/themes/fas/theme.min.js}"></script>   -->
+	<script type="text/javascript" th:src="@{/plugins/bootstrap-fileinput/js/locales/zh.js}"></script>
+	<!-- <script type="text/javascript" th:src="@{/plugins/datatables/datatables.min.js}"></script> -->
+	<script type="text/javascript" th:src="@{/plugins/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+	<script type="text/javascript" th:src="@{/plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+	<script type="text/javascript" th:src="@{/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$(".nav-tabs li:eq(1)").hide();
+			timeInit();
+			init();
+		});
+		// 初始化 日历插件
+		function timeInit(){
+			var picker1 = $('#start_date').datetimepicker({       
+				"format": 'yyyy-mm-dd hh:ii',        
+				// "startDate":new Date(),
+				"autoclose": 1,  
+			});     
+			var picker2 = $('#end_date').datetimepicker({        
+				"format": 'yyyy-mm-dd hh:ii',        
+				// "startDate":new Date(),
+				"autoclose": 1, 
+			}); 
+			//动态设置datetimepicker2的最小值， 不能小于datetimepicker1    
+			picker1.on('changeDate', function (e) {         
+				$('#end_date').datetimepicker('setStartDate',e.date);   
+			}); 
+			//动态设置datetimepicker1的最大值 ，不能大于datetimepifcker2   
+			picker2.on('changeDate', function (e) {         
+				$('#start_date').datetimepicker('setEndDate',e.date);   
+			});
+		}
+		// 初始化历史文件记录表格数据
+		function init(){
+
+			$("#file_table").bootstrapTable({
+				dataField: 'list',
+		        //服务器数据的请求方式 'get' 或 'post'。
+		        method: 'post',
+		        //设置为 true 会在表格底部显示分页条。
+				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				pagination: true,
+		        //请求后台的URL
+		        url: '/batch/files',
+		        //服务器返回的数据类型。
+		        dataType: 'json',
+		        sidePagination: 'server',
+		        //初始化加载第一页，默认第一页
+		        pageNumber: 1, 
+		        //每页的记录行数
+		        pageSize: 10,
+		        //可供选择的每页的行数
+		        pageList: [10,15,20, 50, 100], 
+		        //设置为false 将禁止所有列的排序。
+		        sortable: false,
+		        //是否显示右上角的搜索框
+		        search: false,
+		        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+		        //设置为limit可以获取limit, offset, search, sort, order  
+		        queryParamsType:'',
+		        //请求服务器数据
+				queryParams: function queryParams(params){
+					var param = {
+						pageNumber: params.pageNumber,
+						pageSize: params.pageSize,
+						searchMap:{
+							fileName :$("#file_name").val(),
+							startDate:$("#start_date").val(),
+							endDate:$("#end_date").val(),
+						}
+					};
+					return param;
+				},
+		        //加载成功时执行
+		        onLoadSuccess: function(data){    
+		            console.log("加载成功");  
+		        },
+		        //加载失败时执行  
+		        onLoadError: function(status){  
+		            console.log("加载数据失败"+status);  
+		        },
+		        "columns": [
+		        	{ 
+				    	"title":"序号",
+				    	"formatter": function(value, row, index){
+	                    	return data = index + 1;
+	                	}
+				    },
+				    { 
+				    	"title":"文件名称",
+				    	"field": "fileName",
+				    	// "width": "50%"
+				    },
+				    { 
+				    	"title":"导入时间",
+				    	"field": "uploadTime",
+						"formatter": function (value, row, index) {
+
+							let d = new Date(value);
+
+							let times = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+
+							return times;
+
+						}
+				    },
+				    {
+				    	"title":"状态",
+				    	"field": "state",
+						"formatter": function (value, row, index) {
+							switch (value) {
+								case 0:
+									return "待查询";
+								case 1:
+									return "查询中";
+								case 2:
+									return "查询完成";
+							}
+						}
+				    },
+				    {
+				    	"title":"操作",
+				    	"field": "id",
+	                	"formatter": function(value, row, index){
+							let dis;
+							if(row.state != 2) {
+								// dis = "";
+								dis = "disabled"
+							}else {
+								dis = "";
+							}
+	                    	return data = `<button type="button" ${dis} class="btn blue btn-sm" onclick="view(${value})"> 详细 </button>`;
+	                	}
+	                }
+				]
+			})
+		}
+		// 查询详细 渲染表格内容方法
+		function view(file_id){
+			$(".nav-tabs li:eq(1)").show();
+			$("#tab1,.nav-tabs li:eq(0)").removeClass("active");
+			$("#tab2,.nav-tabs li:eq(1)").addClass("active");
+			var result = {
+				"data": [
+					{
+						"name": "商标名称",
+						"USPTO" : 123,
+						"UK" : 66,
+						"EUIPO" : 44,
+						"DPMA" : 42,
+						"INPI" : 11,
+						"OEPM" : 12,
+						"J_PLATPAT" : 3,
+						"UIBM" : 1,
+						"WIPO" : 13,
+					}
+				]
+			}
+
+			$('#trademark_table').bootstrapTable('destroy');
+			$("#trademark_table").bootstrapTable({
+				dataField: 'list',
+				method: 'post',
+		        pagination: true,
+		        url: '/batch/marks',
+		        dataType: 'json',
+		        sidePagination: 'server',
+				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				pageNumber: 1,
+		        pageSize: 10,
+				pageList: [10, 15, 20, 50, 100],
+		        sortable: false,
+		        search: false,
+		        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+		        //设置为limit可以获取limit, offset, search, sort, order
+		        queryParamsType:'undefined',
+		        //请求服务器数据
+		        queryParams: function queryParams(params){
+					var param = {
+						pageNumber: params.pageNumber,
+						pageSize: params.pageSize,
+						fileId: file_id,
+						searchMap: {
+							trademarkName: $("#search-trademark-name").val()
+						}
+					};
+		             return param;
+		        },
+		        //加载成功时执行
+		        onLoadSuccess: function(data){    
+		            console.log("加载成功");  
+		        },
+		        //加载失败时执行  
+		        onLoadError: function(status){  
+		            console.log("加载数据失败"+status);  
+		        },
+				"data": result.data,
+		        "columns": [
+				    { 
+				    	"title":"序号",
+				    	"formatter": function(value, row, index){
+	                    	return data = index + 1;
+	                	}
+			    	},
+			    	{ 
+				    	"title":"商标名称",
+				    	"field": "trademarkName",
+				    	// "width": "30%"
+			    	},
+			    	{ 
+				    	"title":"美国",
+				    	"field": "uspto"
+				    },
+				    { 
+				    	"title":"英国",
+				    	"field": "uk"
+				    },
+				    { 
+				    	"title":"欧洲",
+				    	"field": "euipo"
+				    },
+				    { 
+				    	"title":"德国",
+				    	"field": "dpma"
+				    },
+				    { 
+				    	"title":"法国",
+				    	"field": "inpi"
+				    },
+				    { 
+				    	"title":"西班牙",
+				    	"field": "oepm"
+				    },
+				    { 
+				    	"title":"日本",
+				    	"field": "jp"
+				    },
+				    { 
+				    	"title":"意大利",
+				    	"field": "uibm"
+				    },
+				    { 
+				    	"title":"世界知识产权组织",
+				    	"field": "wipo"
+				    },
+				]
+			})
+		}
+		// 表格内容重绘方法
+		function reloadDraw(dom_id,draw_data) {
+			var table = $("#" + dom_id).DataTable();
+			var currentPage = table.page();
+	        table.clear();
+	        table.rows.add(draw_data);
+	        table.page(currentPage).draw(false);
+		}
+		// 历史记录表格查询事件
+		function FileDateToSearch() {
+			$("#file_table").bootstrapTable('refresh');
+		}
+		// 商标文件详细表格查询事件
+		function TrademarkNameToSearch() {
+			$("#trademark_table").bootstrapTable('refresh');
+		}
+	</script>
+</html>

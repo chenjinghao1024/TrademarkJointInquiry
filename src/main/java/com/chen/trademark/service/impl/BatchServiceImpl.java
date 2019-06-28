@@ -4,15 +4,14 @@ import com.chen.trademark.conf.UrlConfig;
 import com.chen.trademark.entity.*;
 import com.chen.trademark.mapper.FileRecordMapper;
 import com.chen.trademark.mapper.TrademarkRecordMapper;
-import com.chen.trademark.mapper.TrademarkResultMapper;
 import com.chen.trademark.model.TrademarkInfo;
 import com.chen.trademark.service.IBatchService;
-import com.chen.trademark.util.UrlType;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -20,6 +19,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,8 +31,10 @@ import org.w3c.dom.NodeList;
 
 import javax.annotation.Resource;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -40,11 +46,11 @@ public class BatchServiceImpl implements IBatchService {
     FileRecordMapper fileRecordMapper;
     @Resource
     TrademarkRecordMapper trademarkRecordMapper;
-    @Resource
-    TrademarkResultMapper trademarkResultMapper;
 
     @Autowired
     private UrlConfig urlConfig;
+
+    static SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Override
     public boolean batchDeal(MultipartFile file) throws Exception {
@@ -62,30 +68,78 @@ public class BatchServiceImpl implements IBatchService {
     }
 
     @Override
-    public void batchQuery(int id) {
-        FileRecord file = fileRecordMapper.selectByPrimaryKey(id);
-        TrademarkRecordExample example = new TrademarkRecordExample();
-        TrademarkRecordExample.Criteria criteria = example.createCriteria();
-        criteria.andFileIdEqualTo(id);
+    public void batchQuery() {
 
-        List<TrademarkRecord> trademarkRecords = trademarkRecordMapper.selectByExample(example);
-        try {
-            batchSearchFromUSPTO(trademarkRecords);
+        FileRecordExample fileE = new FileRecordExample();
+        FileRecordExample.Criteria fileECriteria = fileE.createCriteria();
+        fileECriteria.andStateEqualTo(0);
+        List<FileRecord> files = fileRecordMapper.selectByExample(fileE);
+        if (CollectionUtils.isNotEmpty(files)) {
+            FileRecord file = files.get(0);
+            file.setState(1);
+            fileRecordMapper.updateByPrimaryKeySelective(file);
+            TrademarkRecordExample example = new TrademarkRecordExample();
+            TrademarkRecordExample.Criteria criteria = example.createCriteria();
+            criteria.andFileIdEqualTo(file.getId());
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            List<TrademarkRecord> trademarkRecords = trademarkRecordMapper.selectByExample(example);
+            try {
+
+                batchSearchFromUSPTO(trademarkRecords);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            file.setState(2);
+            fileRecordMapper.updateByPrimaryKeySelective(file);
+            batchQuery();
         }
+
+
     }
 
     @Override
-    public PageInfo<FileRecord> getFileByPage(int page, int pageSize) {
-        PageHelper.startPage(page, pageSize);
+    public PageInfo<FileRecord> getFileByPage(PageParams params) throws ParseException {
 
         FileRecordExample example = new FileRecordExample();
+        FileRecordExample.Criteria criteria = example.createCriteria();
         example.setOrderByClause("upload_time desc");
-        List<FileRecord> li = fileRecordMapper.selectByExample(example);
+        Map<String, String> searchMap = params.getSearchMap();
+        if (!params.getSearchMap().isEmpty()) {
+            String fileName = searchMap.get("fileName");
+            if (!fileName.isEmpty()) {
+                criteria.andFileNameLike("%"+fileName+"%");
+            }
+            String startDate = searchMap.get("startDate");
+            String endDate = searchMap.get("endDate");
+            if (!startDate.isEmpty()){
+                criteria.andUploadTimeGreaterThanOrEqualTo(format.parse(startDate));
+            }
+            if (!endDate.isEmpty()){
+                criteria.andUploadTimeLessThanOrEqualTo(format.parse(endDate));
+            }
+        }
 
-        return new PageInfo<>(li);
+        return PageHelper.startPage(params.getPageNumber(), params.getPageSize()).
+                doSelectPageInfo(() -> fileRecordMapper.selectByExample(example));
+    }
+
+    @Override
+    public PageInfo<FileRecord> getMarkByPage(PageParams params,Integer fileId) {
+        TrademarkRecordExample example = new TrademarkRecordExample();
+
+        TrademarkRecordExample.Criteria criteria = example.createCriteria();
+        criteria.andFileIdEqualTo(fileId);
+
+        Map<String, String> searchMap = params.getSearchMap();
+        if (!params.getSearchMap().isEmpty()) {
+            String trademarkName = searchMap.get("trademarkName");
+            if (!trademarkName.isEmpty()) {
+                criteria.andTrademarkNameLike("%" + trademarkName + "%");
+            }
+        }
+
+        return PageHelper.startPage(params.getPageNumber(), params.getPageSize()).
+                doSelectPageInfo(()-> trademarkRecordMapper.selectByExample(example));
     }
 
     private void batchSearchFromUSPTO(List<TrademarkRecord> trademarkRecords) throws Exception {
@@ -105,7 +159,6 @@ public class BatchServiceImpl implements IBatchService {
                 pageAtomicReference.set(anchor.click());
             }
         }
-
 
         if (pageAtomicReference.get() != null) {
             HtmlPage searchPage = pageAtomicReference.get();
@@ -159,14 +212,93 @@ public class BatchServiceImpl implements IBatchService {
                 }catch (Exception e){
                     count = 0L;
                 }
-                TrademarkResult result = new TrademarkResult(trademarkRecord.getId(), UrlType.USPTO.value(), count);
-                trademarkResultMapper.insertSelective(result);
+
+                Long uk = searchFromUKByChrome(trademarkRecord.getTrademarkName()).getCount();
+                Long dpma = searchFromDPMA(trademarkRecord.getTrademarkName()).getCount();
+
+                trademarkRecord.setUk(Math.toIntExact(uk));
+                trademarkRecord.setDpma(Math.toIntExact(dpma));
+                trademarkRecord.setUspto(Math.toIntExact(count));
+                trademarkRecordMapper.updateByPrimaryKeySelective(trademarkRecord);
+                Random ra = new Random();
+
+                ;
+                Thread.sleep((ra.nextInt(5) + 1) * 3000);
+
             }
 
 
         }
         //关闭所有窗口
         webClient.close();
+    }
+
+    private TrademarkInfo searchFromDPMA(String trademarkName) {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        WebDriver driver = new ChromeDriver(chromeOptions);
+        TrademarkInfo trademarkInfo = new TrademarkInfo();
+        try {
+            driver.get(urlConfig.getDPMA());
+
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+            WebElement searchInput = driver.findElement(new By.ById("marke"));
+            WebElement searchBtn = driver.findElement(new By.ById("rechercheStarten"));
+
+            searchInput.sendKeys(trademarkName);
+            searchBtn.click();
+
+
+            List<WebElement> elements = driver.findElement(new By.ById("form")).findElements(new By.ByTagName("p"));
+
+            String resultInfo = "";
+            for (WebElement element : elements) {
+                String content = element.getText().trim();
+                if (content.startsWith("Trefferliste") || content.startsWith("Result list")) {
+                    resultInfo = content;
+                    break;
+                }
+            }
+            String count = resultInfo.split(" ")[1];
+            trademarkInfo.setCount(Long.parseLong(count));
+        } catch (Exception e) {
+
+        }finally {
+            driver.quit();
+        }
+        return trademarkInfo;
+    }
+
+    private TrademarkInfo searchFromUKByChrome(String trademarkName) throws Exception {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        WebDriver driver = new ChromeDriver(chromeOptions);
+        TrademarkInfo trademarkInfo = new TrademarkInfo();
+
+        try {
+            driver.get(urlConfig.getUK());
+
+            driver.navigate().refresh();
+            driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+
+            WebElement searchInput = driver.findElement(new By.ByName("wordSearchPhrase"));
+            WebElement searchBtn = driver.findElement(new By.ById("button"));
+            searchInput.sendKeys(trademarkName);
+            searchBtn.click();
+            Thread.sleep(1000);
+            String result = driver.findElement(new By.ByClassName("heading-medium")).getText();
+            String count = result.split(" ")[3];
+
+            trademarkInfo.setCount(Long.parseLong(count));
+
+        } catch (Exception e) {
+
+        }finally {
+            driver.quit();
+        }
+        return trademarkInfo;
+
     }
 
 
@@ -194,7 +326,7 @@ public class BatchServiceImpl implements IBatchService {
                 continue;
             }
 
-            for (int j = sheet.getFirstRowNum() + 1; j <= sheet.getLastRowNum(); j++) {
+            for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
                 row = sheet.getRow(j);
                 if (row == null || row.getFirstCellNum() == j) {
                     continue;
@@ -213,4 +345,6 @@ public class BatchServiceImpl implements IBatchService {
         is.close();
         return list;
     }
+
+
 }

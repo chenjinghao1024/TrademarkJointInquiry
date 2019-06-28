@@ -11,8 +11,13 @@ public class IndexController {
         return "index";
     }
 
-    @RequestMapping("/batch")
-    public String batch(ModelMap map) {
-        return "batch";
+    @RequestMapping("/record")
+    public String record(ModelMap map) {
+        return "record";
+    }
+
+    @RequestMapping("/query")
+    public String query(ModelMap map) {
+        return "query";
     }
 }
