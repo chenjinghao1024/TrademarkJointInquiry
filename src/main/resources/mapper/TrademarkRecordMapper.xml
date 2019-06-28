@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.trademark.mapper.TrademarkRecordMapper">
+  <resultMap id="BaseResultMap" type="com.chen.trademark.entity.TrademarkRecord">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="file_id" jdbcType="INTEGER" property="fileId" />
+    <result column="trademark_name" jdbcType="VARCHAR" property="trademarkName" />
+    <result column="USPTO" jdbcType="INTEGER" property="uspto" />
+    <result column="UK" jdbcType="INTEGER" property="uk" />
+    <result column="EUIPO" jdbcType="INTEGER" property="euipo" />
+    <result column="DPMA" jdbcType="INTEGER" property="dpma" />
+    <result column="INPI" jdbcType="INTEGER" property="inpi" />
+    <result column="OEPM" jdbcType="INTEGER" property="oepm" />
+    <result column="JP" jdbcType="INTEGER" property="jp" />
+    <result column="WIPO" jdbcType="INTEGER" property="wipo" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    id, file_id, trademark_name, USPTO, UK, EUIPO, DPMA, INPI, OEPM, JP, WIPO
+  </sql>
+  <select id="selectByExample" parameterType="com.chen.trademark.entity.TrademarkRecordExample" resultMap="BaseResultMap">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trademark_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    select 
+    <include refid="Base_Column_List" />
+    from trademark_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    delete from trademark_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.chen.trademark.entity.TrademarkRecordExample">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    delete from trademark_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.chen.trademark.entity.TrademarkRecord">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into trademark_record (file_id, trademark_name, USPTO, 
+      UK, EUIPO, DPMA, INPI, 
+      OEPM, JP, WIPO)
+    values (#{fileId,jdbcType=INTEGER}, #{trademarkName,jdbcType=VARCHAR}, #{uspto,jdbcType=INTEGER}, 
+      #{uk,jdbcType=INTEGER}, #{euipo,jdbcType=INTEGER}, #{dpma,jdbcType=INTEGER}, #{inpi,jdbcType=INTEGER}, 
+      #{oepm,jdbcType=INTEGER}, #{jp,jdbcType=INTEGER}, #{wipo,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chen.trademark.entity.TrademarkRecord">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into trademark_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="trademarkName != null">
+        trademark_name,
+      </if>
+      <if test="uspto != null">
+        USPTO,
+      </if>
+      <if test="uk != null">
+        UK,
+      </if>
+      <if test="euipo != null">
+        EUIPO,
+      </if>
+      <if test="dpma != null">
+        DPMA,
+      </if>
+      <if test="inpi != null">
+        INPI,
+      </if>
+      <if test="oepm != null">
+        OEPM,
+      </if>
+      <if test="jp != null">
+        JP,
+      </if>
+      <if test="wipo != null">
+        WIPO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="trademarkName != null">
+        #{trademarkName,jdbcType=VARCHAR},
+      </if>
+      <if test="uspto != null">
+        #{uspto,jdbcType=INTEGER},
+      </if>
+      <if test="uk != null">
+        #{uk,jdbcType=INTEGER},
+      </if>
+      <if test="euipo != null">
+        #{euipo,jdbcType=INTEGER},
+      </if>
+      <if test="dpma != null">
+        #{dpma,jdbcType=INTEGER},
+      </if>
+      <if test="inpi != null">
+        #{inpi,jdbcType=INTEGER},
+      </if>
+      <if test="oepm != null">
+        #{oepm,jdbcType=INTEGER},
+      </if>
+      <if test="jp != null">
+        #{jp,jdbcType=INTEGER},
+      </if>
+      <if test="wipo != null">
+        #{wipo,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.chen.trademark.entity.TrademarkRecordExample" resultType="java.lang.Long">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    select count(*) from trademark_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    update trademark_record
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.fileId != null">
+        file_id = #{record.fileId,jdbcType=INTEGER},
+      </if>
+      <if test="record.trademarkName != null">
+        trademark_name = #{record.trademarkName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uspto != null">
+        USPTO = #{record.uspto,jdbcType=INTEGER},
+      </if>
+      <if test="record.uk != null">
+        UK = #{record.uk,jdbcType=INTEGER},
+      </if>
+      <if test="record.euipo != null">
+        EUIPO = #{record.euipo,jdbcType=INTEGER},
+      </if>
+      <if test="record.dpma != null">
+        DPMA = #{record.dpma,jdbcType=INTEGER},
+      </if>
+      <if test="record.inpi != null">
+        INPI = #{record.inpi,jdbcType=INTEGER},
+      </if>
+      <if test="record.oepm != null">
+        OEPM = #{record.oepm,jdbcType=INTEGER},
+      </if>
+      <if test="record.jp != null">
+        JP = #{record.jp,jdbcType=INTEGER},
+      </if>
+      <if test="record.wipo != null">
+        WIPO = #{record.wipo,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    update trademark_record
+    set id = #{record.id,jdbcType=INTEGER},
+      file_id = #{record.fileId,jdbcType=INTEGER},
+      trademark_name = #{record.trademarkName,jdbcType=VARCHAR},
+      USPTO = #{record.uspto,jdbcType=INTEGER},
+      UK = #{record.uk,jdbcType=INTEGER},
+      EUIPO = #{record.euipo,jdbcType=INTEGER},
+      DPMA = #{record.dpma,jdbcType=INTEGER},
+      INPI = #{record.inpi,jdbcType=INTEGER},
+      OEPM = #{record.oepm,jdbcType=INTEGER},
+      JP = #{record.jp,jdbcType=INTEGER},
+      WIPO = #{record.wipo,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chen.trademark.entity.TrademarkRecord">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    update trademark_record
+    <set>
+      <if test="fileId != null">
+        file_id = #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="trademarkName != null">
+        trademark_name = #{trademarkName,jdbcType=VARCHAR},
+      </if>
+      <if test="uspto != null">
+        USPTO = #{uspto,jdbcType=INTEGER},
+      </if>
+      <if test="uk != null">
+        UK = #{uk,jdbcType=INTEGER},
+      </if>
+      <if test="euipo != null">
+        EUIPO = #{euipo,jdbcType=INTEGER},
+      </if>
+      <if test="dpma != null">
+        DPMA = #{dpma,jdbcType=INTEGER},
+      </if>
+      <if test="inpi != null">
+        INPI = #{inpi,jdbcType=INTEGER},
+      </if>
+      <if test="oepm != null">
+        OEPM = #{oepm,jdbcType=INTEGER},
+      </if>
+      <if test="jp != null">
+        JP = #{jp,jdbcType=INTEGER},
+      </if>
+      <if test="wipo != null">
+        WIPO = #{wipo,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chen.trademark.entity.TrademarkRecord">
+    <!--
+    该方法由生成器生成,请勿修改
+    -->
+    update trademark_record
+    set file_id = #{fileId,jdbcType=INTEGER},
+      trademark_name = #{trademarkName,jdbcType=VARCHAR},
+      USPTO = #{uspto,jdbcType=INTEGER},
+      UK = #{uk,jdbcType=INTEGER},
+      EUIPO = #{euipo,jdbcType=INTEGER},
+      DPMA = #{dpma,jdbcType=INTEGER},
+      INPI = #{inpi,jdbcType=INTEGER},
+      OEPM = #{oepm,jdbcType=INTEGER},
+      JP = #{jp,jdbcType=INTEGER},
+      WIPO = #{wipo,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
